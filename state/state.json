@@ -2,18 +2,18 @@
   "schema_version": 1,
   "magazines": {
     "economist": {
-      "last_sent_issue": null,
-      "last_sent_at": null,
+      "last_sent_issue": "2026.08.29",
+      "last_sent_at": "2026-08-30T09:27:00+00:00",
       "stale_alerted_issue": null
     },
     "new_yorker": {
-      "last_sent_issue": null,
-      "last_sent_at": null,
+      "last_sent_issue": "2026.08.31",
+      "last_sent_at": "2026-08-30T09:28:00+00:00",
       "stale_alerted_issue": null
     },
     "atlantic": {
-      "last_sent_issue": null,
-      "last_sent_at": null,
+      "last_sent_issue": "2026.08.02",
+      "last_sent_at": "2026-08-30T09:28:00+00:00",
       "stale_alerted_issue": null
     },
     "wired": {
