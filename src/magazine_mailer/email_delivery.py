@@ -34,9 +34,9 @@ class SmtpConfig:
             raise SmtpConfigError(
                 "Missing required email configuration: " + ", ".join(missing)
             )
-        host = values.get("SMTP_HOST", "smtp.gmail.com")
+        host = values.get("SMTP_HOST") or "smtp.gmail.com"
         try:
-            port = int(values.get("SMTP_PORT", "587"))
+            port = int(values.get("SMTP_PORT") or "587")
         except ValueError as exc:
             raise SmtpConfigError("SMTP_PORT must be an integer") from exc
         return cls(
