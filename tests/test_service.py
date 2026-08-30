@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 from magazine_mailer.catalog import MAGAZINES
 from magazine_mailer.models import Issue
 from magazine_mailer.service import MagazineMailer
@@ -119,6 +121,31 @@ def test_failed_delivery_does_not_advance_issue_state(tmp_path):
     assert "economist" in result.failures
     state = StateStore(tmp_path / "state.json").load()
     assert state["magazines"]["economist"]["last_sent_issue"] is None
+
+
+def test_successful_delivery_is_persisted_before_later_interruption(tmp_path):
+    economist = make_issue("economist", "2026.08.29")
+    new_yorker = make_issue("new_yorker", "2026.08.31")
+
+    class InterruptingDelivery(FakeDelivery):
+        def send_issue(self, issue, payload):
+            if issue.magazine_key == "new_yorker":
+                raise KeyboardInterrupt()
+            super().send_issue(issue, payload)
+
+    mailer = make_mailer(
+        tmp_path,
+        source=FakeSource({"economist": economist, "new_yorker": new_yorker}),
+        delivery=InterruptingDelivery(),
+        keys=("economist", "new_yorker"),
+    )
+
+    with pytest.raises(KeyboardInterrupt):
+        mailer.run(today=date(2026, 8, 30))
+
+    state = StateStore(tmp_path / "state.json").load()
+    assert state["magazines"]["economist"]["last_sent_issue"] == "2026.08.29"
+    assert state["magazines"]["new_yorker"]["last_sent_issue"] is None
 
 
 def test_dry_run_downloads_and_validates_but_never_sends_or_writes_state(tmp_path):
