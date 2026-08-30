@@ -1,0 +1,1 @@
+"""Magazine Mailer package."""

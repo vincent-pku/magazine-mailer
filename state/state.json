@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "magazines": {
+    "economist": {
+      "last_sent_issue": null,
+      "last_sent_at": null,
+      "stale_alerted_issue": null
+    },
+    "new_yorker": {
+      "last_sent_issue": null,
+      "last_sent_at": null,
+      "stale_alerted_issue": null
+    },
+    "atlantic": {
+      "last_sent_issue": null,
+      "last_sent_at": null,
+      "stale_alerted_issue": null
+    },
+    "wired": {
+      "last_sent_issue": null,
+      "last_sent_at": null,
+      "stale_alerted_issue": null
+    }
+  }
+}
