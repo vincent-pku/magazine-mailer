@@ -101,3 +101,7 @@ state/state.json
 ## Future fallback source
 
 If `awesome-english-ebooks` stops updating, add another implementation of the `MagazineSource` protocol under `src/magazine_mailer/sources/`. The rest of the application does not depend on GitHub directory naming or on that repository's internal layout.
+
+## Maintenance source of truth
+
+The GitHub `main` branch is the authoritative project state. Maintenance sessions should start by fetching/pulling `origin/main`, then read this README, `state/state.json`, the workflow, source code, tests, and recent Actions runs before making changes. Use normal Git commits and pushes; do not rebuild the repository from chat history.
