@@ -17,9 +17,9 @@ V1 intentionally uses `awesome-english-ebooks` as the only content source. The s
 2. The source adapter checks the latest issue directory for each magazine.
 3. Already delivered issue IDs are skipped.
 4. New EPUBs are downloaded and structurally validated.
-5. Valid EPUBs are sent by SMTP, one magazine per email.
-6. Only successful deliveries are written to `state/state.json`.
-7. The Action commits that state file back to `main`.
+5. Valid EPUBs are sent by SMTP, one magazine per email. EPUBs up to 18 MiB are attached; larger EPUBs are delivered as a direct download link to avoid SMTP attachment-size limits.
+6. Each successful delivery is written to `state/state.json` immediately before the next magazine is processed.
+7. The Action commits that state file back to `main`, including partial-success state when a later magazine fails.
 
 The Economist also has a stale-source check. If the newest detected issue is more than 10 days old, one warning email is sent for that stale issue. The same warning is not repeated until a newer issue appears.
 
@@ -76,9 +76,9 @@ python -m magazine_mailer
 
 ## State guarantees
 
-`state/state.json` is the durable duplicate-suppression record. A magazine's `last_sent_issue` changes only after SMTP reports a successful send. A failed source request, download, EPUB validation, or email send therefore remains retryable on the next run.
+`state/state.json` is the durable duplicate-suppression record. A magazine's `last_sent_issue` changes only after SMTP reports a successful send, and the file is saved immediately after that magazine succeeds. If a later magazine fails or the process is interrupted, earlier successful deliveries remain recorded locally instead of waiting for the whole batch to finish. A failed source request, download, EPUB validation, or email send therefore remains retryable on the next run.
 
-GitHub Actions uses a single concurrency group so two scheduled/manual runs cannot race the state update. The workflow only stages `state/state.json` when it creates an automated state commit.
+GitHub Actions uses a single concurrency group so two scheduled/manual runs cannot race the state update. The state-persist step is configured to run even when the mailer step fails, and it only stages `state/state.json` when it creates an automated state commit.
 
 ## Project layout
 
