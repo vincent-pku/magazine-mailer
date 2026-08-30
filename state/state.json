@@ -1,25 +1,25 @@
 {
-  "schema_version": 1,
   "magazines": {
+    "atlantic": {
+      "last_sent_at": "2026-08-30T09:28:00+00:00",
+      "last_sent_issue": "2026.08.02",
+      "stale_alerted_issue": null
+    },
     "economist": {
-      "last_sent_issue": "2026.08.29",
       "last_sent_at": "2026-08-30T09:27:00+00:00",
+      "last_sent_issue": "2026.08.29",
       "stale_alerted_issue": null
     },
     "new_yorker": {
+      "last_sent_at": "2026-08-30T09:28:00+00:00",
       "last_sent_issue": "2026.08.31",
-      "last_sent_at": "2026-08-30T09:28:00+00:00",
-      "stale_alerted_issue": null
-    },
-    "atlantic": {
-      "last_sent_issue": "2026.08.02",
-      "last_sent_at": "2026-08-30T09:28:00+00:00",
       "stale_alerted_issue": null
     },
     "wired": {
-      "last_sent_issue": null,
-      "last_sent_at": null,
+      "last_sent_at": "2026-08-30T09:45:37.145723+00:00",
+      "last_sent_issue": "2026.08.02",
       "stale_alerted_issue": null
     }
-  }
+  },
+  "schema_version": 1
 }
