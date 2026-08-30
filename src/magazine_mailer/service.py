@@ -54,7 +54,6 @@ class MagazineMailer:
         current_day = today or datetime.now(UTC).date()
         state = self._state_store.load()
         working_state = deepcopy(state) if dry_run else state
-        state_changed = False
 
         for magazine in self._magazines:
             try:
@@ -65,8 +64,13 @@ class MagazineMailer:
                 continue
 
             if magazine.key == "economist":
-                if reset_stale_alert_for_new_issue(working_state, issue):
-                    state_changed = True
+                stale_reset = reset_stale_alert_for_new_issue(working_state, issue)
+                if stale_reset and not dry_run:
+                    try:
+                        self._state_store.save(working_state)
+                    except Exception as exc:
+                        result.failures["state"] = str(exc)
+                        return result
 
             entry = working_state["magazines"][magazine.key]
             if entry["last_sent_issue"] == issue.issue_id:
@@ -83,7 +87,11 @@ class MagazineMailer:
                         self._delivery.send_issue(issue, payload)
                         mark_sent(working_state, issue)
                         result.delivered.append(magazine.key)
-                        state_changed = True
+                        try:
+                            self._state_store.save(working_state)
+                        except Exception as exc:
+                            result.failures["state"] = str(exc)
+                            return result
                 except Exception as exc:
                     result.failures[magazine.key] = str(exc)
 
@@ -102,14 +110,12 @@ class MagazineMailer:
                         self._delivery.send_stale_alert(issue, age_days)
                         mark_stale_alerted(working_state, issue)
                         result.stale_alerts.append(magazine.key)
-                        state_changed = True
+                        try:
+                            self._state_store.save(working_state)
+                        except Exception as exc:
+                            result.failures["state"] = str(exc)
+                            return result
                     except Exception as exc:
                         result.failures[f"{magazine.key}:stale"] = str(exc)
-
-        if not dry_run and state_changed:
-            try:
-                self._state_store.save(working_state)
-            except Exception as exc:
-                result.failures["state"] = str(exc)
 
         return result
