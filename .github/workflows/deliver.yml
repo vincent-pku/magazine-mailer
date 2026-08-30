@@ -58,7 +58,7 @@ jobs:
           fi
 
       - name: Persist delivery state
-        if: ${{ success() && github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || inputs.dry_run == false) }}
+        if: ${{ always() && github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || inputs.dry_run == false) }}
         shell: bash
         run: |
           if git diff --quiet -- state/state.json; then
