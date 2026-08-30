@@ -139,6 +139,21 @@ def test_send_issue_builds_epub_attachment_and_uses_starttls_login_send_sequence
     assert attachments[0].get_payload(decode=True) == b"epub-bytes"
 
 
+def test_send_issue_uses_download_link_when_epub_is_too_large(monkeypatch):
+    factory = SMTPFactory()
+    delivery = EmailDelivery(make_config(), smtp_factory=factory)
+    issue = make_issue()
+    monkeypatch.setattr("magazine_mailer.email_delivery.MAX_ATTACHMENT_BYTES", 10)
+
+    delivery.send_issue(issue, b"x" * 11)
+
+    message = factory.instances[0].sent_message
+    body = message.get_body(preferencelist=("plain",)).get_content()
+    assert issue.epub_url in body
+    assert "too large" in body.lower()
+    assert list(message.iter_attachments()) == []
+
+
 def test_send_stale_alert_contains_issue_and_age_without_attachment():
     factory = SMTPFactory()
     delivery = EmailDelivery(make_config(), smtp_factory=factory)
