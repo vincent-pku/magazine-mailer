@@ -46,9 +46,10 @@ def test_workflow_wires_github_token_and_smtp_secrets():
     assert "MAIL_TO: ${{ secrets.MAIL_TO }}" in text
 
 
-def test_workflow_commits_only_state_file_after_non_dry_success():
+def test_workflow_commits_only_state_file_after_non_dry_run_even_if_mailer_fails():
     text = workflow_text()
 
+    assert "always()" in text
     assert "inputs.dry_run == false" in text
     assert "git diff --quiet -- state/state.json" in text
     assert "git add state/state.json" in text
