@@ -44,6 +44,21 @@ def test_smtp_config_uses_gmail_friendly_defaults():
     assert config.recipient == "reader@example.com"
 
 
+def test_smtp_config_treats_empty_optional_values_as_unset():
+    config = SmtpConfig.from_env(
+        {
+            "MAIL_USERNAME": "sender@example.com",
+            "MAIL_PASSWORD": "app-password",
+            "MAIL_TO": "reader@example.com",
+            "SMTP_HOST": "",
+            "SMTP_PORT": "",
+        }
+    )
+
+    assert config.host == "smtp.gmail.com"
+    assert config.port == 587
+
+
 class FakeSMTP:
     def __init__(self, host, port, timeout=30, *, fail_login=False):
         self.host = host
