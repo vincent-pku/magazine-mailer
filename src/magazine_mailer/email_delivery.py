@@ -9,6 +9,9 @@ from typing import Callable, Mapping
 from magazine_mailer.models import Issue
 
 
+MAX_ATTACHMENT_BYTES = 18 * 1024 * 1024
+
+
 class SmtpConfigError(ValueError):
     pass
 
@@ -60,21 +63,34 @@ class EmailDelivery:
         self._timeout = timeout
 
     def send_issue(self, issue: Issue, payload: bytes) -> None:
-        message = self._base_message(
-            subject=f"{issue.magazine_name} · {issue.issue_id}",
-            body=(
+        oversized = len(payload) > MAX_ATTACHMENT_BYTES
+        if oversized:
+            body = (
+                f"{issue.magazine_name}\n"
+                f"Issue: {issue.issue_id}\n\n"
+                "The EPUB is too large to attach safely via SMTP.\n"
+                f"Download EPUB: {issue.epub_url}\n"
+                "Source: hehonghui/awesome-english-ebooks\n"
+            )
+        else:
+            body = (
                 f"{issue.magazine_name}\n"
                 f"Issue: {issue.issue_id}\n\n"
                 "The latest EPUB is attached.\n"
                 "Source: hehonghui/awesome-english-ebooks\n"
-            ),
+            )
+
+        message = self._base_message(
+            subject=f"{issue.magazine_name} · {issue.issue_id}",
+            body=body,
         )
-        message.add_attachment(
-            payload,
-            maintype="application",
-            subtype="epub+zip",
-            filename=issue.filename,
-        )
+        if not oversized:
+            message.add_attachment(
+                payload,
+                maintype="application",
+                subtype="epub+zip",
+                filename=issue.filename,
+            )
         self._send(message)
 
     def send_stale_alert(self, issue: Issue, age_days: int) -> None:
