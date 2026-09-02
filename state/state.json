@@ -1,8 +1,8 @@
 {
   "magazines": {
     "atlantic": {
-      "last_sent_at": "2026-08-30T09:28:00+00:00",
-      "last_sent_issue": "2026.08.02",
+      "last_sent_at": "2026-09-02T04:41:53.262702+00:00",
+      "last_sent_issue": "2026.09.02",
       "stale_alerted_issue": null
     },
     "economist": {
@@ -16,8 +16,8 @@
       "stale_alerted_issue": null
     },
     "wired": {
-      "last_sent_at": "2026-08-30T09:45:37.145723+00:00",
-      "last_sent_issue": "2026.08.02",
+      "last_sent_at": "2026-09-02T04:41:56.021499+00:00",
+      "last_sent_issue": "2026.09.02",
       "stale_alerted_issue": null
     }
   },
